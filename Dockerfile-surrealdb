@@ -1,4 +1,4 @@
-FROM rust:1.80-bookworm
+FROM debian:bookworm
 
 RUN apt update && apt upgrade -y && apt install -y git curl jq wget
 WORKDIR /tmp/sdb
