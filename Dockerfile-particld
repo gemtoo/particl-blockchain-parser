@@ -1,0 +1,11 @@
+FROM debian:bookworm
+
+WORKDIR /root
+RUN apt update && apt upgrade -y && apt install -y wget jq curl net-tools
+# Query API and download the latest particld
+RUN wget $(curl -s https://api.github.com/repos/particl/particl-core/releases/latest | jq -r '.assets[].browser_download_url' | grep "$(uname -m)" | tail -n 1)
+# Extract particld and move it to /usr/bin
+RUN mkdir /tmp/extracted
+RUN tar -xvf particl-* -C /tmp/extracted && find /tmp/extracted -type f -perm /a+x -exec mv {} /usr/bin/ \;
+STOPSIGNAL SIGINT
+ENTRYPOINT particld

@@ -1,0 +1,36 @@
+services:
+  parser:
+    depends_on:
+      - surrealdb
+      - particld
+    container_name: parser
+    build:
+      context: .
+      dockerfile: ./Dockerfile-parser
+    init: true
+    restart: always
+    stop_grace_period: 0s
+
+  surrealdb:
+    container_name: surrealdb
+    build:
+      dockerfile: ./Dockerfile-surrealdb
+    init: true
+    volumes:
+      - ./parser-data:/persistence
+    ports:
+      - 8000:8000
+    restart: always
+
+  particld:
+    container_name: particld
+    build:
+      dockerfile: ./Dockerfile-particld
+    init: true
+    volumes:
+      - ./particld-data:/root/.particl
+      - ./configs/particl.conf:/root/.particl/particl.conf:ro
+    ports:
+      - 28332:28332
+      - 51735:51735
+    restart: always

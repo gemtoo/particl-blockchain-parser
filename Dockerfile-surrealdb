@@ -1,0 +1,9 @@
+FROM rust:1.80-bookworm
+
+RUN apt update && apt upgrade -y && apt install -y git curl jq wget
+WORKDIR /tmp/sdb
+RUN wget $(curl -s https://api.github.com/repos/surrealdb/surrealdb/releases/tags/v2.0.4 | jq -r '.assets[].browser_download_url' | grep "linux" | grep "amd64")
+RUN mv -v "./$(tar -xvf surreal-* | grep surreal)" /usr/bin
+RUN mkdir /persistence
+
+ENTRYPOINT surreal start --bind 0.0.0.0:8000 --log info --unauthenticated surrealkv:///persistence
