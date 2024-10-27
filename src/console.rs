@@ -366,7 +366,7 @@ pub async fn getnewproposal(
     rpcurl: &RPCURL,
 ) -> Result<Option<Proposal>, Box<dyn Error>> {
     // 616959 is the block at which the first vote was recorded. Vote must have an associated proposal.
-    if blockdata.height > 616959 {
+    if blockdata.height >= 616959 {
         match blockdata.voting_info.clone() {
             Some(vote) => {
                 let existsyet = proposal_ids.iter().any(|&x| x == vote.proposal_id);
